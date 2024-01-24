@@ -1,0 +1,39 @@
+<% @reasons.each do |r| %>
+  <div data-reason-id="<%= r.id %>"
+       data-reason-target="reasonListItem"
+       data-action="dragstart->reason#startDrag drop->reason#drop dragover->reason#dragOver dragleave->reason#dragLeave"
+       draggable="true"
+       class="flex w-full h-14 p-4 justify-start items-start items-center gap-6 <%= r == @reasons.last ? '' : 'border-b border-neutral-200' %>">
+    <i class="fa-sharp fa-solid fa-grip-vertical text-zinc-300 hover:cursor-grab"
+       data-action="mousedown->reason#grabHandle"></i>
+    <div class="w-[463px] h-6 justify-start items-center gap-4 inline-flex">
+      <%= button_tag type: 'button',
+                     class: "visibility-toggle",
+                     data: {
+                       action: "click->reason#updateVisibility",
+                       reason_target: "visibilityButton",
+                       reason_button_id: r.id
+                     } do %>
+        <div class=<%= r.active ? '' : 'hidden' %>>
+          <%= render partial: 'shared/eye' %>
+        </div>
+        <div class=<%= r.active ? 'hidden' : '' %>>
+          <%= render partial: 'shared/eye_slash' %>
+        </div>
+      <% end %>
+      <div class="list-item-label grow shrink basis-0 text-base font-semibold <%= r.active ? 'text-zinc-800' : 'text-zinc-500' %>">
+        <%=
+          r.label
+        %>
+      </div>
+    </div>
+    <div data-controller="modal" data-action="keydown.esc->modal#close" tabindex="-1" draggable="false">
+      <a href="#" class="text-blue-600 hover:text-blue-700 active:text-blue-800 text-base font-semibold" data-action="click->modal#open:prevent">
+        Edit
+      </a>
+      <%= form.simple_fields_for :reasons, r do |reason_fields| %>
+        <%= render 'reason_edit_modal', f: reason_fields, r: r %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

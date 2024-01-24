@@ -1,0 +1,100 @@
+<div class="hidden fixed inset-0 bg-black bg-opacity-80 overflow-y-auto flex items-center justify-center"
+     data-modal-target="background"
+     data-transition-enter="transition-all ease-in-out duration-300"
+     data-transition-enter-from="bg-opacity-0"
+     data-transition-enter-to="bg-opacity-80"
+     data-transition-leave="transition-all ease-in-out duration-300"
+     data-transition-leave-from="bg-opacity-80"
+     data-transition-leave-to="bg-opacity-0">
+  <div data-modal-target="container" class="flex max-h-screen w-full max-w-lg relative">
+    <div class="flex w-[720px] h-[522px] p-4 bg-white rounded-2xl flex-col gap-6 items-end relative z-10">
+      <div class="flex w-[688px] h-[50px] justify-between items-center pb-4 border-b border-zinc-200">
+        <div class="text-black text-2xl font-bold">Edit Return Reason</div>
+        <div class="h-8 w-8 justify-center items-center hover:text-zinc-700 active:text-zinc-800" data-action="click->modal#close">
+          <i class="flex fa-solid fa-x h-4 w-4"></i>
+        </div>
+      </div>
+      <div class="flex w-[688px] h-[106px] flex-col justify-start items-start gap-2">
+        <div class="self-stretch text-zinc-800 text-base font-semibold">Displayed reason</div>
+        <%=
+          f.input :label,
+                  wrapper_html: { class: 'flex self-stretch *:bg-gray-50' },
+                  input_html: { class: 'label-input w-[688px] h-[47px] px-4 py-3 rounded-xl border border-neutral-200 justify-start items-start gap-2.5',
+                                data: { reason_id: r.id }
+                  },
+                  label: false,
+                  required: true,
+                  placeholder: 'Enter Displayed reason...'
+        %>
+        <div class="text-zinc-800 text-sm font-normal">
+          Provide a friendly description for the reason that will be displayed to the customer.
+        </div>
+      </div>
+      <div class="flex w-[688px] h-[126px] self-stretch flex-col justify-start items-start gap-2">
+        <div class="self-stretch text-base font-semibold">Internal return code</div>
+        <%=
+          f.input :code,
+                  wrapper_html: { class: 'flex self-stretch *:bg-gray-50' },
+                  input_html: { class: 'w-[688px] h-[47px] px-4 py-3 rounded-xl border border-neutral-200 justify-start items-start gap-2.5' },
+                  label: false,
+                  required: true,
+                  placeholder: 'Enter Internal return code...'
+        %>
+        <div class="w-[544px] text-zinc-800 text-sm font-normal leading-tight">
+          For internal use only. Must be unique. To aid in analytics, we do not recommend changing the code once set.
+        </div>
+      </div>
+      <div class="flex w-[688px] h-[68px] flex-col justify-start items-start gap-1">
+        <div class="flex w-[688px] self-stretch justify-start items-center gap-3">
+          <%= button_tag type: 'button',
+                         class: "modal-visibility-toggle",
+                         data: {
+                           action: "click->reason#updateVisibility",
+                           reason_target: "visibilityButton",
+                           reason_button_id: r.id,
+                           is_modal: true
+                         } do %>
+            <div class=<%= r.active ? '' : 'hidden' %>>
+              <%= render partial: 'shared/eye' %>
+            </div>
+            <div class=<%= r.active ? 'hidden' : '' %>>
+              <%= render partial: 'shared/eye_slash' %>
+            </div>
+          <% end %>
+          <div class="modal-visibility-header-active ext-zinc-800 text-base font-semibold <%= r.active ? '' : 'hidden' %>">Return
+            Reason is Visible
+          </div>
+          <div class="modal-visibility-header-inactive ext-zinc-800 text-base font-semibold <%= r.active ? 'hidden' : '' %>">Return
+            Reason is Hidden
+          </div>
+        </div>
+        <div class="self-stretch px-9 justify-start items-start gap-2 inline-flex">
+          <div class="w-[616px] text-zinc-800 text-sm font-normal">
+            When hidden, this return reason is not offered as an option to the customers.
+            Click on the eye icon to make the return reason visible.
+          </div>
+        </div>
+      </div>
+      <div class="flex w-[688px] h-11 justify-between items-start">
+        <button type="button"
+                class="flex w-[95px] h-11 px-6 py-3 rounded-lg border-2 border-red-500 hover:border-red-600 active:bg-red-700 text-red-500 active:text-white justify-center items-center gap-1"
+                data-action="click->modal#close click->reason#deleteReason">
+          <span class="text-center text-sm font-bold">Delete</span>
+        </button>
+        <%= f.hidden_field :_destroy %>
+        <button type="button"
+                class="flex w-[95px] h-11 px-6 py-3 bg-amber-400 hover:bg-amber-500 active:bg-amber-600 rounded-lg justify-center items-center gap-1 <%= r.persisted? ? '' : 'hidden' %>"
+                data-action="click->modal#close click->reason#continueEdit"
+                data-reason-id=<%= r.id %>>
+          <span class="text-center text-black text-sm font-bold">Continue</span>
+        </button>
+        <button type="button"
+                class="flex w-[95px] h-11 px-6 py-3 bg-green-400 hover:bg-green-500 active:bg-green-600 rounded-lg justify-center items-center gap-1 <%= r.persisted? ? 'hidden' : '' %>"
+                data-action="click->reason#createReason click->modal#close"
+                data-reason-id=<%= r.id %>>
+          <span class="text-center text-black text-sm font-bold">Create</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

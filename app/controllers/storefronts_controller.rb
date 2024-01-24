@@ -57,10 +57,33 @@ class StorefrontsController < ApplicationController
     end
   end
 
+  def update_visibility
+    reason = Reason.find_by(id: params[:id])
+
+    reason.update(active: !reason.active)
+
+    respond_to do |format|
+      format.json { render json: { updated: true, active: reason.active } }
+    end
+  end
+
+  def update_order
+    params[:new_order].each do |o|
+      id_key = o.keys[0]
+      reason = Reason.find_by(id: id_key)
+      reason.update(ordering: o[id_key])
+    end
+
+    respond_to do |format|
+      format.json { render json: { updated: true } }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_storefront
       @storefront = Storefront.find(params[:id])
+      @reasons = @storefront.reasons.ordered
     end
 
     # Only allow a list of trusted parameters through.

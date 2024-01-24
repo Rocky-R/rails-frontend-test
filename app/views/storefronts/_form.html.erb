@@ -1,4 +1,5 @@
-<%= simple_form_for storefront, data: { controller: 'nested-form', nested_form_index_value: 'NEW_RECORD' } do |form| %>
+<%= simple_form_for storefront, html: { id: :storefront_form },
+                    data: { controller: 'nested-form', nested_form_index_value: 'NEW_RECORD' } do |form| %>
   <% if storefront.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(storefront.errors.count, "error") %> prohibited this storefront from being saved:</h2>
@@ -11,33 +12,24 @@
     </div>
   <% end %>
 
-  <div>
-    <div
-      class="return-reason-container"
-    >
-      <template hidden data-nested-form-target="template">
-        <%= form.simple_fields_for :reasons, Reason.new, child_index: 'NEW_RECORD' do |reason_fields| %>
-          <%= render 'reason', f: reason_fields %>
+  <div class="h-auto bg-gray-50 rounded-xl border border-neutral-200 justify-start items-center">
+    <div class="return-reason-container" data-controller="reason">
+      <div data-controller="modal" data-action="keydown.esc->modal#close" tabindex="-1" draggable="false">
+        <button type="button" data-action="click->modal#open:prevent" class="p-4 justify-start items-center gap-6 inline-flex">
+          <i class="fa-sharp fa-solid fa-circle-plus text-2xl text-blue-600"></i>
+          <span class="grow shrink basis-0 text-base font-semibold text-blue-600">Add Return Reason</span>
+        </button>
+        <%= form.simple_fields_for :reasons, r = Reason.new do |reason_fields| %>
+          <%= render 'reason_edit_modal', f: reason_fields, r: r %>
         <% end %>
-      </template>
+      </div>
 
-      <button type="button" data-action="nested-form#addAssociation" class="btn">
-        <i class="add-icon"></i> Add Return Reason
-      </button>
-      <%= form.simple_fields_for :reasons, @storefront.reasons.ordered do |reason_fields| %>
-        <%= render 'reason', f: reason_fields %>
-      <% end %>
 
+      <div class="self-stretch h-px border border-neutral-200"></div>
+      <div>
+        <%= render partial: 'reason_list', locals: { form: form } %>
+      </div>
       <div hidden data-nested-form-target="addItem"></div>
-    </div>
-  </div>
-
-  <div>
-    <div>
-      Remember to save your changes before leaving this page
-    </div>
-    <div>
-      <%= form.submit 'Save', class: 'btn-primary' %>
     </div>
   </div>
 <% end %>
